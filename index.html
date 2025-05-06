@@ -1,72 +1,604 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Poxel.io</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta charset="UTF-8">
+    <title>POTATO POXEL 2025 HYPER EDITION</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#000000">
     <style>
-        /* ABSOLUTE MINIMAL CSS - NO LAG */
-        html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
-        iframe { position:fixed; top:0; left:0; width:100%; height:100%; border:0; display:block; }
+        /* ======= CORE RESET ======= */
+        html, body, div, span, iframe, h1, h2, h3, p, a, img, ul, li, canvas {
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font-size: 100%;
+            font: inherit;
+            vertical-align: baseline;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: none;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        
+        /* ======= QUANTUM LAYERS ======= */
+        body {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #000;
+            font-family: 'Quantum', 'Orbitron', monospace;
+            line-height: 1;
+            perspective: 1000px;
+            transform-style: preserve-3d;
+            will-change: transform;
+        }
+        
+        #universe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        #hyper-loader {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            background: radial-gradient(ellipse at center, rgba(5,5,15,0.95) 0%, rgba(0,0,5,1) 100%);
+            transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 1.5s;
+            overflow: hidden;
+        }
+        
+        #game-portal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
+            transform: translateZ(0);
+        }
+        
+        /* ======= QUANTUM FONTS ======= */
+        @font-face {
+            font-family: 'Quantum';
+            src: url('data:font/woff2;base64,d09GMgABAAAAA...') format('woff2');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        /* ======= STARFIELD BACKGROUND ======= */
+        #quantum-stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            overflow: hidden;
+        }
+        
+        .star-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            transform: translateZ(0);
+        }
+        
+        /* ======= POTATO NEBULA ======= */
+        #potato-nebula {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200vmax;
+            height: 200vmax;
+            background: radial-gradient(ellipse at center, rgba(255,85,85,0.2) 0%, rgba(255,85,85,0) 70%);
+            transform: translate(-50%, -50%);
+            animation: nebula-pulse 15s infinite alternate;
+            z-index: 2;
+            pointer-events: none;
+        }
+        
+        /* ======= LOADER CORE ======= */
+        .hyper-core {
+            position: relative;
+            width: 30vmin;
+            height: 30vmin;
+            min-width: 200px;
+            min-height: 200px;
+            margin-bottom: 5vmin;
+            z-index: 10;
+        }
+        
+        .core-orb {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at center, rgba(255,85,85,0.8) 0%, rgba(255,85,85,0) 70%);
+            box-shadow: 0 0 50px rgba(255,85,85,0.6);
+            animation: core-pulse 3s infinite alternate;
+            transform: translateZ(0);
+            will-change: transform, box-shadow;
+        }
+        
+        .core-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,247,255,0.3) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,247,255,0.3) 1px, transparent 1px);
+            background-size: 30px 30px;
+            border-radius: 50%;
+            transform: translateZ(0);
+        }
+        
+        .core-glyph {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8vmin;
+            font-weight: 900;
+            color: rgba(255,255,255,0.9);
+            text-shadow: 0 0 20px rgba(255,85,85,0.8);
+            z-index: 5;
+        }
+        
+        /* ======= MAIN TITLE ======= */
+        .hyper-title {
+            font-size: 6vmin;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff5555 0%, #c724f1 50%, #00f7ff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255,85,85,0.3);
+            margin-bottom: 2vmin;
+            letter-spacing: 1vmin;
+            text-transform: uppercase;
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        
+        /* ======= LOADING STATUS ======= */
+        .hyper-status {
+            font-size: 2vmin;
+            color: #00f7ff;
+            text-shadow: 0 0 10px rgba(0,247,255,0.5);
+            margin-bottom: 5vmin;
+            min-height: 3vmin;
+            letter-spacing: 0.5vmin;
+            transform: translateZ(0);
+            will-change: contents;
+        }
+        
+        /* ======= PROGRESS SYSTEM ======= */
+        .hyper-progress {
+            width: 50vmin;
+            max-width: 500px;
+            height: 1vmin;
+            min-height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 1vmin;
+            overflow: hidden;
+            margin-bottom: 5vmin;
+            box-shadow: 0 0 20px rgba(0,247,255,0.1);
+            transform: translateZ(0);
+        }
+        
+        .hyper-progress-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff5555, #c724f1, #00f7ff);
+            transition: width 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            will-change: width;
+        }
+        
+        .hyper-progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0.8) 0%, 
+                rgba(255,255,255,0) 50%);
+            animation: progress-shine 2s infinite;
+            transform: translateZ(0);
+        }
+        
+        /* ======= CREDITS ======= */
+        .hyper-credits {
+            position: absolute;
+            bottom: 5vmin;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            font-size: 1.5vmin;
+            color: rgba(255,255,255,0.5);
+            text-shadow: 0 0 5px rgba(255,255,255,0.2);
+            letter-spacing: 0.3vmin;
+            transform: translateZ(0);
+        }
+        
+        .hyper-credits span {
+            color: #ff5555;
+            text-shadow: 0 0 10px rgba(255,85,85,0.5);
+        }
+        
+        /* ======= PARTICLES ======= */
+        .quantum-particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translateZ(0);
+            will-change: transform;
+        }
+        
+        /* ======= ANIMATIONS ======= */
+        @keyframes core-pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 30px rgba(255,85,85,0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 60px rgba(255,85,85,0.8); }
+            100% { transform: scale(0.95); box-shadow: 0 0 30px rgba(255,85,85,0.4); }
+        }
+        
+        @keyframes nebula-pulse {
+            0% { transform: translate(-50%, -50%) scale(0.9); opacity: 0.2; }
+            100% { transform: translate(-50%, -50%) scale(1.1); opacity: 0.3; }
+        }
+        
+        @keyframes progress-shine {
+            0% { transform: translateX(-100%) skewX(-30deg); }
+            100% { transform: translateX(300%) skewX(-30deg); }
+        }
+        
+        @keyframes particle-float {
+            0% { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) rotate(360deg); opacity: 0; }
+        }
+        
+        /* ======= QUANTUM RESPONSIVE ======= */
+        @media (max-width: 768px) {
+            .hyper-core {
+                width: 50vw;
+                height: 50vw;
+            }
+            
+            .hyper-title {
+                font-size: 8vw;
+            }
+            
+            .hyper-status {
+                font-size: 3vw;
+            }
+            
+            .hyper-progress {
+                width: 70vw;
+            }
+            
+            .hyper-credits {
+                font-size: 2.5vw;
+            }
+        }
     </style>
-    <!-- PRELOAD EVERYTHING -->
-    <link rel="preload" href="https://poxel.io" as="document">
-    <link rel="preconnect" href="https://poxel.io" crossorigin>
-    <link rel="dns-prefetch" href="https://poxel.io">
 </head>
 <body>
-    <!-- RAW IFRAME - NO WRAPPERS -->
-    <iframe 
-        src="https://poxel.io" 
-        allow="autoplay; fullscreen *" 
-        allowfullscreen 
-        loading="eager" 
-        importance="high" 
-        sandbox="allow-scripts allow-same-origin allow-popups allow-pointer-lock" 
-        frameborder="0"
-    ></iframe>
+    <!-- ======= QUANTUM UNIVERSE ======= -->
+    <div id="universe">
+        <div id="quantum-stars"></div>
+        <div id="potato-nebula"></div>
+    </div>
+    
+    <!-- ======= HYPER LOADER ======= -->
+    <div id="hyper-loader">
+        <div class="hyper-core">
+            <div class="core-orb"></div>
+            <div class="core-grid"></div>
+            <div class="core-glyph">🥔</div>
+        </div>
+        
+        <h1 class="hyper-title">POTATO POXEL 2025</h1>
+        <div class="hyper-status" id="hyper-status">INITIALIZING QUANTUM POTATO MATRIX...</div>
+        
+        <div class="hyper-progress">
+            <div class="hyper-progress-bar" id="hyper-progress"></div>
+        </div>
+        
+        <div class="hyper-credits">
+            <span>POORPOTATO</span> QUANTUM GAMING DIVISION | <span>ALL RIGHTS RESERVED</span> | <span>NEURAL NETWORK v12.5</span>
+        </div>
+    </div>
+    
+    <!-- ======= GAME PORTAL ======= -->
+    <iframe id="game-portal" 
+            src="https://poxel.io" 
+            allow="autoplay; fullscreen *" 
+            allowfullscreen 
+            loading="eager"></iframe>
 
-    <!-- PERFORMANCE HACKS -->
+    <!-- ======= QUANTUM SCRIPT ======= -->
     <script>
     (function() {
-        // KILL ALL BACKGROUND PROCESSES
-        if (window.console && window.console.profile) console.profile('Poxel.io MAX FPS');
-        if (window.stop) window.stop(); // Stop any pending requests
+        'use strict';
         
-        // FORCE MAXIMUM BROWSER PRIORITY
-        document.body.style.webkitTransform = 'translateZ(0)';
-        document.body.style.transform = 'translateZ(0)';
+        // ======= QUANTUM CONSTANTS =======
+        const PERFORMANCE_MODE = true;
+        const MAX_PARTICLES = 50;
+        const STAR_LAYERS = 3;
+        const LOAD_STEPS = 100;
+        const STATUS_MESSAGES = [
+            { text: "BOOTING POTATO CORES...", progress: 5 },
+            { text: "CALIBRATING STARCH QUANTIFIERS...", progress: 15 },
+            { text: "SYNCING WITH SPUDNET...", progress: 25 },
+            { text: "OPTIMIZING TUBER RENDERING...", progress: 35 },
+            { text: "ACTIVATING QUANTUM SLICERS...", progress: 45 },
+            { text: "CONNECTING TO POTATO CLOUD...", progress: 55 },
+            { text: "INITIALIZING MASH PROTOCOLS...", progress: 65 },
+            { text: "TUNING FRIED CIRCUITS...", progress: 75 },
+            { text: "FINALIZING NEURAL SEASONING...", progress: 85 },
+            { text: "READY TO FRY", progress: 95 }
+        ];
         
-        // DISABLE ALL ANIMATIONS/TRANSITIONS
-        var styles = document.createElement('style');
-        styles.textContent = '* { animation:none!important; transition:none!important; }';
-        document.head.appendChild(styles);
+        // ======= QUANTUM STATE =======
+        let quantumState = {
+            progress: 0,
+            currentStatus: 0,
+            particles: [],
+            stars: [],
+            lastFrameTime: performance.now(),
+            loaded: false
+        };
         
-        // LOCK FPS TO SCREEN REFRESH RATE
-        var lastTime = performance.now();
-        function frame() {
-            var now = performance.now();
-            var delta = now - lastTime;
-            lastTime = now;
-            requestAnimationFrame(frame);
-        }
-        requestAnimationFrame(frame);
+        // ======= QUANTUM ELEMENTS =======
+        const elements = {
+            loader: document.getElementById('hyper-loader'),
+            status: document.getElementById('hyper-status'),
+            progress: document.getElementById('hyper-progress'),
+            game: document.getElementById('game-portal'),
+            universe: document.getElementById('universe'),
+            starfield: document.getElementById('quantum-stars'),
+            nebula: document.getElementById('potato-nebula')
+        };
         
-        // PREVENT BACKGROUND THROTTLING
-        document.addEventListener('visibilitychange', function() {
-            if (document.hidden) {
-                // Pause when tab is inactive
-                document.querySelector('iframe').src = '';
-            } else {
-                // Resume when tab is active
-                document.querySelector('iframe').src = 'https://poxel.io';
+        // ======= QUANTUM INIT =======
+        function initQuantumUniverse() {
+            if (PERFORMANCE_MODE) {
+                document.body.style.willChange = 'transform';
+                elements.loader.style.willChange = 'opacity, visibility';
+                elements.game.style.willChange = 'opacity';
             }
-        });
+            
+            createStarfield();
+            createParticles();
+            beginLoadingSequence();
+            setupEventListeners();
+        }
+        
+        // ======= STARFIELD CREATION =======
+        function createStarfield() {
+            for (let i = 0; i < STAR_LAYERS; i++) {
+                const layer = document.createElement('div');
+                layer.className = 'star-layer';
+                layer.style.zIndex = i + 1;
+                
+                const canvas = document.createElement('canvas');
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                layer.appendChild(canvas);
+                
+                elements.starfield.appendChild(layer);
+                quantumState.stars.push({
+                    element: layer,
+                    canvas: canvas,
+                    ctx: canvas.getContext('2d'),
+                    stars: [],
+                    speed: 0.2 + (i * 0.3),
+                    count: 100 + (i * 50),
+                    size: 0.5 + (i * 0.5)
+                });
+                
+                initStars(quantumState.stars[i]);
+            }
+            
+            animateStarfield();
+        }
+        
+        function initStars(layer) {
+            for (let i = 0; i < layer.count; i++) {
+                layer.stars.push({
+                    x: Math.random() * layer.canvas.width,
+                    y: Math.random() * layer.canvas.height,
+                    size: Math.random() * layer.size,
+                    alpha: Math.random()
+                });
+            }
+        }
+        
+        function animateStarfield() {
+            if (quantumState.loaded) return;
+            
+            quantumState.stars.forEach(layer => {
+                layer.ctx.clearRect(0, 0, layer.canvas.width, layer.canvas.height);
+                
+                layer.stars.forEach(star => {
+                    star.y += layer.speed;
+                    if (star.y > layer.canvas.height) {
+                        star.y = 0;
+                        star.x = Math.random() * layer.canvas.width;
+                    }
+                    
+                    layer.ctx.fillStyle = `rgba(255, 255, 255, ${star.alpha})`;
+                    layer.ctx.beginPath();
+                    layer.ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                    layer.ctx.fill();
+                });
+            });
+            
+            requestAnimationFrame(animateStarfield);
+        }
+        
+        // ======= PARTICLES SYSTEM =======
+        function createParticles() {
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'quantum-particle';
+                    
+                    const size = Math.random() * 10 + 5;
+                    const posX = Math.random() * 100;
+                    const posY = Math.random() * 100;
+                    
+                    particle.style.width = `${size}px`;
+                    particle.style.height = `${size}px`;
+                    particle.style.left = `${posX}%`;
+                    particle.style.top = `${posY}%`;
+                    particle.style.background = `radial-gradient(circle, 
+                        hsla(${Math.random() * 60 + 300}, 100%, 50%, 0.8) 0%, 
+                        hsla(${Math.random() * 60 + 180}, 100%, 50%, 0) 70%)`;
+                    particle.style.boxShadow = `0 0 ${size * 2}px currentColor`;
+                    
+                    // Set animation properties
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 50 + Math.random() * 100;
+                    particle.style.setProperty('--tx', `${Math.cos(angle) * distance}px`);
+                    particle.style.setProperty('--ty', `${Math.sin(angle) * distance}px`);
+                    
+                    particle.style.animation = `particle-float ${3 + Math.random() * 7}s linear infinite`;
+                    particle.style.animationDelay = `${Math.random() * 5}s`;
+                    
+                    elements.loader.appendChild(particle);
+                    quantumState.particles.push(particle);
+                    
+                    // Remove particle after animation completes
+                    particle.addEventListener('animationend', () => {
+                        particle.remove();
+                        quantumState.particles = quantumState.particles.filter(p => p !== particle);
+                        createParticles(); // Replace with new particle
+                    });
+                }, i * 300);
+            }
+        }
+        
+        // ======= LOADING SEQUENCE =======
+        function beginLoadingSequence() {
+            updateLoadingProgress();
+        }
+        
+        function updateLoadingProgress() {
+            if (quantumState.progress < LOAD_STEPS) {
+                // Dynamic progress based on time and random factor
+                const timeFactor = (performance.now() - quantumState.lastFrameTime) / 16;
+                const randomBoost = 1 + (Math.random() * 2);
+                quantumState.progress = Math.min(quantumState.progress + (timeFactor * randomBoost), LOAD_STEPS);
+                
+                // Update progress bar
+                elements.progress.style.width = `${quantumState.progress}%`;
+                
+                // Update status message if needed
+                const nextStatus = STATUS_MESSAGES.find(msg => 
+                    quantumState.progress >= msg.progress && 
+                    STATUS_MESSAGES.indexOf(msg) > quantumState.currentStatus
+                );
+                
+                if (nextStatus) {
+                    quantumState.currentStatus = STATUS_MESSAGES.indexOf(nextStatus);
+                    elements.status.textContent = nextStatus.text;
+                    
+                    // Add visual feedback
+                    elements.status.style.animation = 'none';
+                    void elements.status.offsetWidth;
+                    elements.status.style.animation = 'core-pulse 0.8s 1';
+                }
+                
+                quantumState.lastFrameTime = performance.now();
+                requestAnimationFrame(updateLoadingProgress);
+            } else {
+                completeLoading();
+            }
+        }
+        
+        function completeLoading() {
+            quantumState.loaded = true;
+            elements.progress.style.width = '100%';
+            elements.status.textContent = "POTATO SYSTEMS ONLINE";
+            
+            // Trigger transition
+            setTimeout(() => {
+                document.body.classList.add('quantum-loaded');
+                elements.game.style.opacity = '1';
+                
+                // Hide loader after transition
+                setTimeout(() => {
+                    elements.loader.style.display = 'none';
+                }, 1500);
+            }, 500);
+        }
+        
+        // ======= EVENT HANDLERS =======
+        function setupEventListeners() {
+            // If iframe loads before our animation completes
+            elements.game.addEventListener('load', () => {
+                if (!quantumState.loaded) {
+                    quantumState.progress = LOAD_STEPS;
+                    completeLoading();
+                }
+            });
+            
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                quantumState.stars.forEach(layer => {
+                    layer.canvas.width = window.innerWidth;
+                    layer.canvas.height = window.innerHeight;
+                    layer.stars = [];
+                    initStars(layer);
+                });
+            });
+            
+            // Prevent background throttling
+            document.addEventListener('visibilitychange', () => {
+                if (document.hidden) {
+                    elements.game.src = '';
+                } else {
+                    elements.game.src = 'https://poxel.io';
+                }
+            });
+        }
+        
+        // ======= QUANTUM BOOT =======
+        initQuantumUniverse();
     })();
     </script>
 </body>
