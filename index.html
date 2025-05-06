@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Poxel.io</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+        /* ABSOLUTE MINIMAL CSS - NO LAG */
+        html, body { margin:0; padding:0; width:100%; height:100%; overflow:hidden; background:#000; }
+        iframe { position:fixed; top:0; left:0; width:100%; height:100%; border:0; display:block; }
+    </style>
+    <!-- PRELOAD EVERYTHING -->
+    <link rel="preload" href="https://poxel.io" as="document">
+    <link rel="preconnect" href="https://poxel.io" crossorigin>
+    <link rel="dns-prefetch" href="https://poxel.io">
+</head>
+<body>
+    <!-- RAW IFRAME - NO WRAPPERS -->
+    <iframe 
+        src="https://poxel.io" 
+        allow="autoplay; fullscreen *" 
+        allowfullscreen 
+        loading="eager" 
+        importance="high" 
+        sandbox="allow-scripts allow-same-origin allow-popups allow-pointer-lock" 
+        frameborder="0"
+    ></iframe>
+
+    <!-- PERFORMANCE HACKS -->
+    <script>
+    (function() {
+        // KILL ALL BACKGROUND PROCESSES
+        if (window.console && window.console.profile) console.profile('Poxel.io MAX FPS');
+        if (window.stop) window.stop(); // Stop any pending requests
+        
+        // FORCE MAXIMUM BROWSER PRIORITY
+        document.body.style.webkitTransform = 'translateZ(0)';
+        document.body.style.transform = 'translateZ(0)';
+        
+        // DISABLE ALL ANIMATIONS/TRANSITIONS
+        var styles = document.createElement('style');
+        styles.textContent = '* { animation:none!important; transition:none!important; }';
+        document.head.appendChild(styles);
+        
+        // LOCK FPS TO SCREEN REFRESH RATE
+        var lastTime = performance.now();
+        function frame() {
+            var now = performance.now();
+            var delta = now - lastTime;
+            lastTime = now;
+            requestAnimationFrame(frame);
+        }
+        requestAnimationFrame(frame);
+        
+        // PREVENT BACKGROUND THROTTLING
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden) {
+                // Pause when tab is inactive
+                document.querySelector('iframe').src = '';
+            } else {
+                // Resume when tab is active
+                document.querySelector('iframe').src = 'https://poxel.io';
+            }
+        });
+    })();
+    </script>
+</body>
+</html>
